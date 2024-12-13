@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Laporan Dana Masuk</h1>
+
+<form method="POST" enctype="multipart/form-data">
+    <label for="uraian">Uraian:</label>
+    <select id="uraian" name="uraian" required onchange="updateJumlah()">
+        <option value="" disabled selected>Pilih Proposal</option>
+        {% for proposal in proposals %}
+        <option value="{{ proposal.deskripsi }}" data-jumlah="{{ proposal.jumlah }}">{{ proposal.deskripsi }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="jumlah">Jumlah:</label>
+    <input type="number" id="jumlah" name="jumlah" required >
+    
+    <label for="tanggal"> Tanggal:</label>
+    <input type="date" id="tanggal" name="tanggal" required>
+
+    <label for="bukti">Bukti (Upload Foto):</label>
+    <input type="file" id="bukti" name="bukti" accept="image/*" capture="camera" required>
+
+    <button type="submit">Tambah Laporan</button>
+</form>
+
+<h2>Daftar Laporan Dana Masuk</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Uraian</th>
+            <th>Tanggal</th>
+            <th>Bukti</th>
+            <th>Jumlah</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for laporan in laporan_dana_masuk %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ laporan.uraian }}</td>
+            <td>{{ laporan.tanggal.strftime('%d-%m-%y')}}</td>
+            <td><img src="{{ url_for('static', filename='uploads/' ~ laporan.bukti) }}" width="100" alt="Bukti"></td>
+            <td>{{ laporan.jumlah }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    function updateJumlah() {
+        var selectedOption = document.getElementById('uraian').selectedOptions[0];
+        var jumlah = selectedOption ? selectedOption.getAttribute('data-jumlah') : '';
+        document.getElementById('jumlah').value = jumlah;
+    }
+</script>
+
+{% endblock %}
